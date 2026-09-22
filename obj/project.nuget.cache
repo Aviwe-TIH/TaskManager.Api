@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "HUtFDcb67EI=",
+  "success": true,
+  "projectFilePath": "/Users/aviwebaleni/TaskManager.Api/TaskManager.Api.csproj",
+  "expectedPackageFiles": [
+    "/Users/aviwebaleni/.nuget/packages/microsoft.aspnetcore.openapi/10.0.11/microsoft.aspnetcore.openapi.10.0.11.nupkg.sha512",
+    "/Users/aviwebaleni/.nuget/packages/microsoft.openapi/2.7.5/microsoft.openapi.2.7.5.nupkg.sha512",
+    "/Users/aviwebaleni/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.9.0/swashbuckle.aspnetcore.swaggerui.6.9.0.nupkg.sha512"
+  ],
+  "logs": []
+}
