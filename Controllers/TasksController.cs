@@ -1,52 +1,50 @@
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
+using TaskManager.Api.Models;
 using TaskManager.Api.Services;
-using TaskManger.Api.Models;
 
 namespace TaskManager.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TaskController(ITaskRepository repository): ControllerBase
+public class TaskController(ITaskRepository repository) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<TaskItem>> GetAll([FromQuery] bool? completed)
+    public async Task<ActionResult<IEnumerable<TaskItem>>> GetAll([FromQuery] bool? completed)
     {
-        var tasks = repository.GetAll();
-        if (completed.HasValue)
-        {
-           tasks = tasks.Where(task => task.isCompleted == completed.Value); 
-        }
+        var tasks = await repository.GetAllAsync(completed);
         return Ok(tasks);
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<TaskItem> GetById(int id)
+    public async Task<ActionResult<TaskItem>> GetById(int id)
     {
-        var task = repository.GetById(id); 
-        if (task is null) return NotFound(); 
-        return Ok(task); 
-
+        var task = await repository.GetByIdAsync(id);
+        if (task is null) return NotFound();
+        return Ok(task);
     }
 
     [HttpPost]
-    public ActionResult Create([FromBody] TaskItem task)
+    public async Task<ActionResult> Create([FromBody] TaskItem task)
     {
-        var createdTask = repository.Create(task);
-        if(createdTask is null) return BadRequest();
-        return CreatedAtAction(nameof(GetById), new { id = createdTask.Id }, createdTask);
+        var created = await repository.CreateTaskAsync(task);
+        if (!created) return BadRequest("Could not create task. Duplicate ID.");
+
+        return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
     }
 
-    [HttpPut]
-    public ActionResult UpdateTask([FromBody] TaskItem task)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] TaskItem task)
     {
-        return repository.Update(task)? NoContent(): NotFound();
+        if (id != task.Id) return BadRequest("Route ID and body ID do not match.");
+
+        var updated = await repository.UpdateTaskAsync(task);
+        return updated ? NoContent() : NotFound();
     }
+
     [HttpDelete("{id:int}")]
-    public ActionResult DeleteTask(int id)
+    public async Task<ActionResult> Delete(int id)
     {
-        var task = repository.GetAll().FirstOrDefault(task => task.Id==id);
-        
-        if(task is null) return NotFound();
-        return repository.Delete(task)? NoContent(): NotFound();
+        var deleted = await repository.DeleteTaskAsync(id);
+        return deleted ? NoContent() : NotFound();
     }
 }

@@ -1,4 +1,4 @@
-namespace TaskManger.Api.Models;
+namespace TaskManager.Api.Models;
 
 public enum TaskPriority
 {

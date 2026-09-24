@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-namespace TaskManger.Api.Models;
+namespace TaskManager.Api.Models;
 
 public class TaskItem
 {
-    
+    [Key]
     public int Id {get; set;}
     
     [StringLength(100,MinimumLength=3)]
