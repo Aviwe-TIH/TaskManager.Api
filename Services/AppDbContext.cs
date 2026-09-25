@@ -19,6 +19,14 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TaskItem>()
             .Property(t => t.Priority)
             .HasConversion<string>();
+
+        // 1.1 Convert the SQLite Ints to bool values
+        modelBuilder.Entity<TaskItem>()
+            .Property(t => t.isCompleted)
+            .HasConversion(
+                v => v ? "true" : "false",   
+                v => v == "true"             
+            );
         
         // 2. Seed the entity data
         modelBuilder.Entity<TaskItem>()
