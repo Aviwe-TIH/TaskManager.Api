@@ -12,7 +12,7 @@ public class TaskItem
     [StringLength(500)]
     public required string Description {get; set;}
 
-    public bool isCompleted {get; set;}
+    public bool isCompleted {get; set;} 
 
     public TaskPriority Priority {get; set;} = TaskPriority.MEDIUM;
 

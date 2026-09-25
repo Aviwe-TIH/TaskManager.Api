@@ -12,7 +12,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<ITaskRepository, TaskService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("taskDB")
+    options.UseSqlite("Data Source=taskDB")
 );
 
 // Global exception handling

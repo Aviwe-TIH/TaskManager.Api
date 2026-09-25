@@ -14,18 +14,19 @@ public class TaskService(AppDbContext db, ILogger<TaskService> logger) : ITaskRe
         {
             query = query.Where(t => t.isCompleted == completed.Value);
         }
-
+        logger.LogInformation("Executing the query to get all tasks.");
         return await query.ToListAsync();
     }
 
     public async Task<TaskItem?> GetByIdAsync(int id)
     {
+        logger.LogInformation($"Getting a task with the ID: {id}");
         return await db.Tasks.FindAsync(id);
     }
 
     public async Task<bool> CreateTaskAsync(TaskItem taskItem)
     {
-        logger.LogDebug("Creating task item with title: {Title}", taskItem.Title);
+        logger.LogInformation("Creating task item with title: {Title}", taskItem.Title);
 
         if (taskItem.Id > 0)
         {
@@ -45,16 +46,19 @@ public class TaskService(AppDbContext db, ILogger<TaskService> logger) : ITaskRe
     public async Task<bool> UpdateTaskAsync(TaskItem taskItem)
     {
         var existing = await db.Tasks.FindAsync(taskItem.Id);
-        if (existing is null) return false;
+        if (existing is not null)
+        {
+            existing.Title = taskItem.Title;
+            existing.Description = taskItem.Description;
+            existing.Priority = taskItem.Priority;
+            existing.isCompleted = taskItem.isCompleted;
+            existing.DueDate = taskItem.DueDate;
 
-        existing.Title = taskItem.Title;
-        existing.Description = taskItem.Description;
-        existing.Priority = taskItem.Priority;
-        existing.isCompleted = taskItem.isCompleted;
-        existing.DueDate = taskItem.DueDate;
-
-        await db.SaveChangesAsync();
-        return true;
+            await db.SaveChangesAsync();
+            return true;
+        }
+        logger.LogError("Task to update was not found. ");
+        return false;
     }
 
     public async Task<bool> DeleteTaskAsync(int id)
